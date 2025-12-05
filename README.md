@@ -8,11 +8,16 @@ API REST para cálculo de score de crédito desenvolvida com FastAPI.
 
 ## Tecnologias
 
+**Backend:**
 - Python 3.13
 - FastAPI
 - Pydantic
 - Pytest
 
+**Frontend:**
+- HTML5
+- CSS3
+- JavaScript
 ---
 
 ## Instalação
@@ -41,6 +46,20 @@ python main.py
 ```
 
 Acesse: http://localhost:8000/docs
+
+---
+
+## Interface Web
+
+O projeto inclui uma interface visual para simular o score.
+
+**Como usar:**
+1. Execute `INICIAR.bat` (Windows)
+2. A interface abre automaticamente no navegador
+
+Ou manualmente:
+1. Rode a API: `python main.py`
+2. Abra o arquivo `index.html` no navegador
 
 ---
 
@@ -110,6 +129,12 @@ Acesse: http://localhost:8000/docs
 ```bash
 pytest tests/test_main.py -v
 ```
+
+---
+
+## Changelog
+
+Veja o arquivo [CHANGELOG.md] para histórico de mudanças.
 
 ---
 
