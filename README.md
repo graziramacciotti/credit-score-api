@@ -41,7 +41,15 @@ pip install -r requirements.txt
 
 ## Execução
 
+**Windows:**
+- Dê duplo clique em `INICIAR.bat`
+- Na primeira vez, automatizado para que o ambiente virtual seja criado
+
+**Manual:**
 ```bash
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 python main.py
 ```
 

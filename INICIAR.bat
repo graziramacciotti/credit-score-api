@@ -7,19 +7,34 @@ echo     SIMULADOR DE SCORE DE CREDITO
 echo  ====================================
 echo.
 
-if not exist "venv\Scripts\activate.bat" (
-    echo [ERRO] Ambiente virtual nao encontrado!
+python --version >nul 2>&1
+if errorlevel 1 (
+    echo [ERRO] Python nao encontrado!
     echo.
-    echo Execute primeiro:
-    echo   python -m venv venv
-    echo   venv\Scripts\activate
-    echo   pip install -r requirements.txt
+    echo Baixe em: https://www.python.org/downloads/
     echo.
     pause
     exit
 )
 
-call venv\Scripts\activate.bat
+if not exist "venv\Scripts\activate.bat" (
+    echo Primeira execucao detectada!
+    echo.
+    echo Criando ambiente virtual...
+    python -m venv venv
+    
+    echo Ativando ambiente...
+    call venv\Scripts\activate.bat
+    
+    echo Instalando dependencias...
+    pip install -r requirements.txt
+    
+    echo.
+    echo Instalacao concluida!
+    echo.
+) else (
+    call venv\Scripts\activate.bat
+)
 
 echo Abrindo interface no navegador...
 timeout /t 2 /nobreak >nul
