@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score de Crédito</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+
+        .container { max-width: 450px; margin: 0 auto; }
+
+        header { text-align: center; margin-bottom: 25px; }
+        header h1 { font-size: 1.6rem; margin-bottom: 5px; }
+        header p { color: #64748b; font-size: 0.9rem; }
+
+        .card {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #334155;
+            border-radius: 10px;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus { outline: none; border-color: #6366f1; }
+
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+
+        .btn-primary { background: linear-gradient(135deg, #6366f1, #4f46e5); color: #fff; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(99,102,241,0.4); }
+        .btn-secondary { background: #334155; color: #fff; }
+        .btn-secondary:hover { background: #475569; }
+
+        #resultado { display: none; }
+
+        .score-box { text-align: center; padding: 30px 0; }
+        .score-numero { font-size: 4.5rem; font-weight: 700; line-height: 1; }
+        .score-label { color: #64748b; margin-top: 5px; }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+
+        .baixo { background: #10b98133; color: #10b981; }
+        .medio { background: #f59e0b33; color: #f59e0b; }
+        .alto { background: #f9731633; color: #f97316; }
+        .muito_alto { background: #ef444433; color: #ef4444; }
+
+        .mensagem { color: #94a3b8; font-size: 0.95rem; margin-bottom: 20px; }
+
+        .fator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .fator-positivo { border-left: 3px solid #10b981; }
+        .fator-negativo { border-left: 3px solid #ef4444; }
+
+        .pontos { font-weight: 700; }
+        .pontos.positivo { color: #10b981; }
+        .pontos.negativo { color: #ef4444; }
+
+        .secao-titulo {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin: 20px 0 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .recomendacao {
+            padding: 10px 12px;
+            background: #f59e0b15;
+            border-left: 3px solid #f59e0b;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #fbbf24;
+        }
+
+        footer { text-align: center; margin-top: 30px; color: #475569; font-size: 0.8rem; }
+        footer a { color: #6366f1; text-decoration: none; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeIn 0.4s ease; }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ffffff33;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💳 Score de Crédito</h1>
+            <p>Simule sua pontuação de crédito</p>
+        </header>
+
+        <div class="card" id="formulario">
+            <form id="form">
+                <div class="form-group">
+                    <label>Nome</label>
+                    <input type="text" id="nome" required minlength="3" placeholder="Seu nome completo">
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label>Idade</label>
+                        <input type="number" id="idade" required min="18" max="100" placeholder="25">
+                    </div>
+                    <div class="form-group">
+    			<label>Renda (R$)</label>
+    			<input type="number" id="renda" required min="0" placeholder="5000" step="100">
+		</div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+    			<label>Dívidas (R$)</label>
+    			<input type="number" id="dividas" required min="0" placeholder="1500" step="100">
+		 </div>
+                    <div class="form-group">
+                        <label>Pagamentos</label>
+                        <select id="historico" required>
+                            <option value="em_dia">✓ Em dia</option>
+                            <option value="atraso_leve">⚠ Atraso leve</option>
+                            <option value="atraso_grave">✗ Atraso grave</option>
+                            <option value="inadimplente">✗ Inadimplente</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+    <label>Tempo de crédito (meses)</label>
+    <input type="number" id="tempo" required min="0" max="600" placeholder="36">
+    <small style="color: #64748b; font-size: 0.75rem;">ℹ️ Desde seu primeiro cartão ou empréstimo</small>
+</div>
+                    <div class="form-group">
+    <label>Consultas (6 meses)</label>
+    <input type="number" id="consultas" required min="0" max="50" placeholder="2">
+    <small style="color: #64748b; font-size: 0.75rem;">ℹ️ Consulte grátis em serasa.com.br</small>
+</div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btnCalcular">
+                    <span id="btnTexto">Calcular Score</span>
+                    <span id="btnLoading" class="loading hidden"></span>
+                </button>
+            </form>
+        </div>
+
+        <div class="card fade-in" id="resultado">
+            <div class="score-box">
+                <div class="score-numero" id="scoreNumero">0</div>
+                <div class="score-label">de 1000 pontos</div>
+                <div class="badge" id="riscoBadge">Risco</div>
+            </div>
+
+            <p class="mensagem" id="mensagem"></p>
+
+            <div class="secao-titulo">Fatores analisados</div>
+            <div id="fatores"></div>
+
+            <div id="recomendacoesBox">
+                <div class="secao-titulo">Recomendações</div>
+                <div id="recomendacoes"></div>
+            </div>
+
+            <button class="btn-secondary" onclick="novaConsulta()">← Nova consulta</button>
+        </div>
+
+        <footer>
+            Desenvolvido por <a href="https://github.com/graziramacciotti" target="_blank">Grazi Ramacciotti</a>
+        </footer>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8000';
+        const form = document.getElementById('form');
+        const formulario = document.getElementById('formulario');
+        const resultado = document.getElementById('resultado');
+        const btnTexto = document.getElementById('btnTexto');
+        const btnLoading = document.getElementById('btnLoading');
+
+        const riscoTexto = {
+            baixo: '🟢 Risco Baixo',
+            medio: '🟡 Risco Médio', 
+            alto: '🟠 Risco Alto',
+            muito_alto: '🔴 Risco Muito Alto'
+        };
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            btnTexto.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+
+            const dados = {
+                nome: document.getElementById('nome').value,
+                idade: +document.getElementById('idade').value,
+                renda_mensal: +document.getElementById('renda').value,
+                dividas_totais: +document.getElementById('dividas').value,
+                historico_pagamentos: document.getElementById('historico').value,
+                tempo_primeiro_credito_meses: +document.getElementById('tempo').value,
+                consultas_ultimos_6_meses: +document.getElementById('consultas').value,
+                quantidade_contas_bancarias: 1
+            };
+
+            try {
+                const res = await fetch(`${API}/score/calcular`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dados)
+                });
+
+                if (!res.ok) throw new Error('Erro na API');
+                
+                const data = await res.json();
+                mostrarResultado(data);
+            } catch (err) {
+                alert('Erro! Verifique se a API está rodando.\n\nExecute: python main.py');
+            } finally {
+                btnTexto.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+            }
+        });
+
+        function mostrarResultado(data) {
+            formulario.style.display = 'none';
+            resultado.style.display = 'block';
+
+            animarNumero(document.getElementById('scoreNumero'), data.score);
+
+            const scoreEl = document.getElementById('scoreNumero');
+            scoreEl.className = 'score-numero ' + data.nivel_risco;
+
+            const badge = document.getElementById('riscoBadge');
+            badge.textContent = riscoTexto[data.nivel_risco];
+            badge.className = 'badge ' + data.nivel_risco;
+
+            document.getElementById('mensagem').textContent = data.mensagem;
+
+            const fatoresEl = document.getElementById('fatores');
+            fatoresEl.innerHTML = '';
+
+            [...data.fatores_positivos, ...data.fatores_negativos].forEach(f => {
+                const tipo = f.tipo === 'positivo' ? 'positivo' : 'negativo';
+                const sinal = f.impacto > 0 ? '+' : '';
+                fatoresEl.innerHTML += `
+                    <div class="fator fator-${tipo}">
+                        <span>${f.fator}</span>
+                        <span class="pontos ${tipo}">${sinal}${f.impacto}</span>
+                    </div>
+                `;
+            });
+
+            const recsBox = document.getElementById('recomendacoesBox');
+            const recsEl = document.getElementById('recomendacoes');
+            
+            if (data.recomendacoes.length > 0) {
+                recsBox.style.display = 'block';
+                recsEl.innerHTML = data.recomendacoes
+                    .map(r => `<div class="recomendacao">${r}</div>`)
+                    .join('');
+            } else {
+                recsBox.style.display = 'none';
+            }
+        }
+
+        function novaConsulta() {
+            resultado.style.display = 'none';
+            formulario.style.display = 'block';
+        }
+
+        function animarNumero(el, target) {
+            let current = 0;
+            const step = target / 50;
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(interval);
+                }
+                el.textContent = Math.round(current);
+            }, 20);
+        }
+    </script>
+</body>
+</html>
